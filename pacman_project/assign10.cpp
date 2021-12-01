@@ -13,8 +13,12 @@
 #include <math.h>
 using namespace std;
 
+char * message = new char[1024];
+
+static bool quit = false;
+static bool first = true;
 static bool replay = false; //check if starts a new game
-static bool over = true; //check for the game to be over
+static bool over = false; //check for the game to be over
 static float squareSize = 50.0; //size of one square on the game
 static float xIncrement = 0; // x movement on pacman
 static float yIncrement = 0; // y movement on pacman
@@ -174,7 +178,7 @@ void updateMonster(float* monster, int id){
 		switch ((int)monster[2]){
 		case 1:
 			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
-				monster[0] -= 2 / squareSize;
+				monster[0] -= 1 / squareSize;
 			}else {
 				int current = monster[2];
 				do{
@@ -184,7 +188,7 @@ void updateMonster(float* monster, int id){
 			break;
 		case 2:
 			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-				monster[0] += 2 / squareSize;
+				monster[0] += 1 / squareSize;
 			}
 			else {
 				int current = monster[2];
@@ -195,7 +199,7 @@ void updateMonster(float* monster, int id){
 			break;
 		case 3:
 			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-				monster[1] -= 2 / squareSize;
+				monster[1] -= 1 / squareSize;
 			}
 			else {
 				int current = monster[2];
@@ -206,7 +210,7 @@ void updateMonster(float* monster, int id){
 			break;
 		case 4:
 			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-				monster[1] += 2 / squareSize;
+				monster[1] += 1 / squareSize;
 			}
 			else {
 				int current = monster[2];
@@ -259,8 +263,12 @@ void keyOperations(){
 		int x1Quadrant = (int)((x - 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
 		if (!bitmap.at(x1Quadrant).at((int)y/squareSize)){
 			xIncrement -= 2 / squareSize;
-			//yIncrement = 0; //edit
 			rotation = 2;
+			// edits
+			keyStates['d'] = false;
+			keyStates['w'] = false;
+			keyStates['s'] = false;
+			//keyStates['a'] = false; //check
 		}
 	}
 	if (keyStates['d']){
@@ -268,36 +276,60 @@ void keyOperations(){
 		int x2Quadrant = (int)((x + 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
 		if (!bitmap.at(x2Quadrant).at((int)y / squareSize)){
 			xIncrement += 2 / squareSize;
-			//yIncrement = 0; //edit
 			rotation = 0;
+			// edits
+                        keyStates['a'] = false;
+                        keyStates['w'] = false;
+                        keyStates['s'] = false;
+			//keyStates['d'] = false; //check
 		}
 	}
 	if (keyStates['w']){
 		y -= 2;
 		int y1Quadrant = (int)((y - 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at((int)x/squareSize).at(y1Quadrant)){
+		//if (!bitmap.at(y1Quadrant).at((int)x / squareSize)){ // my edit which did not work
+		if (!bitmap.at((int)x/squareSize).at(y1Quadrant)){ 
 			yIncrement -= 2 / squareSize;
-			//xIncrement = 0; //edit
 			rotation = 3;
+			// edits
+                        keyStates['d'] = false;
+                        keyStates['a'] = false;
+                        keyStates['s'] = false;
+			//keyStates['w'] = false; //check
 		}
 	}
 	if (keyStates['s']){
 		y += 2;
 		int y2Quadrant = (int)((y + 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
+		//if (!bitmap.at(y2Quadrant).at((int)x / squareSize)){
 		if (!bitmap.at((int)x / squareSize).at(y2Quadrant)){
 			yIncrement += 2 / squareSize;
-			//xIncrement = 0; //edit
 			rotation = 1;
+			// edits
+                        keyStates['d'] = false;
+                        keyStates['w'] = false;
+                        keyStates['a'] = false;
+			//keyStates['s'] = false; //check
 		}
 	}
 	if (keyStates[' ']){
-		if (!replay && over){
+		/*
+		if (!replay && !over){
 			resetGame();
 			replay = true;
+			keyStates[' '] = false; //edit
 		}
 		else if (replay && over){
-			replay = false;
+			resetGame();
+			over = false;
+			keyStates[' '] = false; //edit
 		}
+		*/
+		resetGame();
+		replay = true;
+	}
+	if (keyStates['q']){
+		quit = true;
 	}
 }
 
@@ -332,10 +364,12 @@ void gameOver(){
 
 //Method to display the results of the game at the ends
 void resultsDisplay(){
+	//works at this point
+	glClearColor(0, 0.2, 0.4, 1.0);
 	if (points == 106){
 		//Won
 		string text = "*************************************";
-		char* message = new char[text.length()+1];
+		message = new char[text.length()+1];
 		strcpy(message, text.c_str());
 
 		glRasterPos2f(170, 250);
@@ -366,11 +400,11 @@ void resultsDisplay(){
 		glRasterPos2f(170, 550);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-			delete [] message;
+		delete [] message;
 	}else {
 		//Lost
 		string text = "*************************";
-		char* message = new char[text.length()+1];
+		message = new char[text.length()+1];
 		strcpy(message, text.c_str());
 
 		glRasterPos2f(210, 250);
@@ -425,7 +459,7 @@ void resultsDisplay(){
 		glRasterPos2f(170, 550);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-		delete message;
+		delete [] message;
 	}
 }
 
@@ -433,7 +467,7 @@ void resultsDisplay(){
 void welcomeScreen(){
 	glClearColor(0, 0.2, 0.4, 1.0);
 	string text = "*************************************";
-	char * message = new char[text.length()+1];
+	message = new char[text.length()+1];
 	strcpy(message, text.c_str());
 
 	glRasterPos2f(150, 200);
@@ -477,12 +511,16 @@ void welcomeScreen(){
 
 //Method to display the screen and its elements
 void display(){
-	if (points == 1){
+	/*
+	if (points < 106){
 		over = false;
 	}
+	*/
+
 	keyOperations();
 	glClear(GL_COLOR_BUFFER_BIT);
 	gameOver();
+
 	if (replay){
 		if (!over){
 			drawLaberynth();
@@ -498,11 +536,12 @@ void display(){
 			drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
 		}
 		else {
-			resultsDisplay();
+			resultsDisplay(); //segfault in this function
 		}
 	}
 	else {
 		welcomeScreen();
+
 	}
 	glutSwapBuffers();
 }
@@ -537,6 +576,7 @@ int main(int argc, char** argv){
 	//run the game
 	init();
 	glutMainLoop();
+
 	return 0;
 }
 
