@@ -23,11 +23,11 @@ static float squareSize = 50.0; //size of one square on the game
 static float xIncrement = 0; // x movement on pacman
 static float yIncrement = 0; // y movement on pacman
 static int rotation = 0; // orientation of pacman
-float* monster1 = new float[3] {10.5, 8.5, 1.0}; //coordinates and direction of first monster
 
-//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)******************
-//float* monster2 = new float[3] {13.5, 1.5, 2.0}; //coordinates and direction of second monster
-//float* monster3 = new float[3] {4.5, 6.5, 3.0}; //coordinates and direction of third monster
+//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+float* monster1 = new float[3] {10.5, 8.5, 1.0}; //coordinates and direction of first monster
+float* monster2 = new float[3] {13.5, 1.5, 2.0}; //coordinates and direction of second monster
+float* monster3 = new float[3] {4.5, 6.5, 3.0}; //coordinates and direction of third monster
 //float* monster4 = new float[3] {2.5, 13.5, 4.0}; //coordinates and direction of fourth monster
 static vector<int> border = { 0, 0, 15, 1, 15, 15, 14, 1, 0, 14, 15, 15, 1, 14, 0, 0 }; //coordinates of the border walls
 
@@ -178,25 +178,74 @@ void updateMonster(float* monster, int id){
 	int y1Quadrant = (int)((monster[1] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
 	int y2Quadrant = (int)((monster[1] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
 	//move him acording to its direction until he hits an obstacle
-	if (keyStates['j']){
-		if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
-				monster[0] -= 2 / squareSize;
+	if (monster[2] == 1)
+	{
+		if (keyStates['j']){
+			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
+					monster[0] -= 2 / squareSize;
+			}
+		}
+		if (keyStates['l']){
+			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
+					monster[0] += 2 / squareSize;
+				}
+		}
+		if (keyStates['i']){
+			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+					monster[1] -= 2 / squareSize;
+				}
+		}
+		if (keyStates['k']){
+			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
+					monster[1] += 2 / squareSize;
+				}
 		}
 	}
-	if (keyStates['l']){
-		if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-				monster[0] += 2 / squareSize;
+	else if (monster[2] == 2)
+	{
+		if (keyStates['f']){
+			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
+					monster[0] -= 2 / squareSize;
 			}
+		}
+		if (keyStates['h']){
+			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
+					monster[0] += 2 / squareSize;
+				}
+		}
+		if (keyStates['t']){
+			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+					monster[1] -= 2 / squareSize;
+				}
+		}
+		if (keyStates['g']){
+			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
+					monster[1] += 2 / squareSize;
+				}
+		}
 	}
-	if (keyStates['i']){
-		if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-				monster[1] -= 2 / squareSize;
+	else if (monster[2] == 3)
+	{
+		if (keyStates[75]){
+			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
+					monster[0] -= 2 / squareSize;
 			}
-	}
-	if (keyStates['k']){
-		if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-				monster[1] += 2 / squareSize;
-			}
+		}
+		if (keyStates[77]){
+			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
+					monster[0] += 2 / squareSize;
+				}
+		}
+		if (keyStates[72]){
+			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+					monster[1] -= 2 / squareSize;
+				}
+		}
+		if (keyStates[80]){
+			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
+					monster[1] += 2 / squareSize;
+				}
+		}
 	}
 		//COMMENTING OUT RANDOM GHOST MOVEMENT******************
 		/*
@@ -268,9 +317,9 @@ void resetGame(){
 	rotation = 0;
 	monster1 = new float[3] {10.5, 8.5, 1.0};
 
-	//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)
-	// monster2 = new float[3] {13.5, 1.5, 2.0};
-	// monster3 = new float[3] {4.5, 6.5, 3.0};
+	//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+	monster2 = new float[3] {13.5, 1.5, 2.0};
+	monster3 = new float[3] {4.5, 6.5, 3.0};
 	// monster4 = new float[3] {2.5, 13.5, 4.0};
 	points = 0;
 	for (int i = 0; i < 256; i++){
@@ -332,27 +381,27 @@ void keyOperations(){
 void gameOver(){
 	int pacmanX = (int)(1.5 + xIncrement);
 	int pacmanY = (int)(1.5 + yIncrement);
+
+	//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
 	int monster1X = (int)(monster1[0]);
 	int monster1Y = (int)(monster1[1]);
-
-	//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)********************
-	//int monster2X = (int)(monster2[0]);
-	//int monster2Y = (int)(monster2[1]);
-	//int monster3X = (int)(monster3[0]);
-	//int monster3Y = (int)(monster3[1]);
+	int monster2X = (int)(monster2[0]);
+	int monster2Y = (int)(monster2[1]);
+	int monster3X = (int)(monster3[0]);
+	int monster3Y = (int)(monster3[1]);
 	//int monster4X = (int)(monster4[0]);
 	//int monster4Y = (int)(monster4[1]);
+
+	//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
 	if (pacmanX == monster1X && pacmanY == monster1Y){
 		over = true;
 	}
-
-	//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)*********************
-	// if (pacmanX == monster2X && pacmanY == monster2Y){
-	// 	over = true;
-	// }
-	// if (pacmanX == monster3X && pacmanY == monster3Y){
-	// 	over = true;
-	// }
+	if (pacmanX == monster2X && pacmanY == monster2Y){
+		over = true;
+	}
+	if (pacmanX == monster3X && pacmanY == monster3Y){
+		over = true;
+	}
 	// if (pacmanX == monster4X && pacmanY == monster4Y){
 	// 	over = true;
 	// }
@@ -456,17 +505,17 @@ void display(){
 			drawLaberynth();
 			drawFood((1.5 + xIncrement) * squareSize, (1.5 + yIncrement) * squareSize);
 			drawPacman(1.5 + xIncrement, 1.5 + yIncrement, rotation);
+
+			//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
 			updateMonster(monster1, 1);
-
-			//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)************************
-			// updateMonster(monster2, 2);
-			// updateMonster(monster3, 3);
+			updateMonster(monster2, 2);
+			updateMonster(monster3, 3);
 			// updateMonster(monster4, 4);
-			drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
 
-			//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)**********************
-			// drawMonster(monster2[0], monster2[1], 1.0, 0.0, 0.0); //red
-			// drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
+			//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+			drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
+			drawMonster(monster2[0], monster2[1], 1.0, 0.0, 0.0); //red
+			drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
 			// drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
 		}
 		else {
