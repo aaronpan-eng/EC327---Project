@@ -2,6 +2,10 @@
 // Course: CSE 2050
 // Project: assign10
 
+// MODIFIED FOR EC327 PROJECT******************
+
+//MAC USERS MIGHT HAVE TO COMMENT THIS LINE BELOW BACK IN************************
+//#define GL_SILENCE_DEPRECATION; 
 #include <stdlib.h>
 #include <vector>
 #include <deque>
@@ -13,20 +17,18 @@
 #include <math.h>
 using namespace std;
 
-char * message = new char[1024];
-
-static bool quit = false;
-static bool first = true;
 static bool replay = false; //check if starts a new game
-static bool over = false; //check for the game to be over
+static bool over = true; //check for the game to be over
 static float squareSize = 50.0; //size of one square on the game
 static float xIncrement = 0; // x movement on pacman
 static float yIncrement = 0; // y movement on pacman
 static int rotation = 0; // orientation of pacman
 float* monster1 = new float[3] {10.5, 8.5, 1.0}; //coordinates and direction of first monster
+
+//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)******************
 float* monster2 = new float[3] {13.5, 1.5, 2.0}; //coordinates and direction of second monster
-float* monster3 = new float[3] {4.5, 6.5, 3.0}; //coordinates and direction of third monster
-float* monster4 = new float[3] {2.5, 13.5, 4.0}; //coordinates and direction of fourth monster
+//float* monster3 = new float[3] {4.5, 6.5, 3.0}; //coordinates and direction of third monster
+//float* monster4 = new float[3] {2.5, 13.5, 4.0}; //coordinates and direction of fourth monster
 static vector<int> border = { 0, 0, 15, 1, 15, 15, 14, 1, 0, 14, 15, 15, 1, 14, 0, 0 }; //coordinates of the border walls
 
 //coordinates of the obstacles (divided into 3 for clarity)
@@ -168,17 +170,66 @@ void drawMonster(float positionX, float positionY, float r, float g, float b){
 }
 
 //Method to update the position of the monsters randomly
+//MOVING THE GHOST WITH KEY PRESSES**************************
 void updateMonster(float* monster, int id){
-		//find the current position of the monster
-		int x1Quadrant = (int)((monster[0] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		int x2Quadrant = (int)((monster[0] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		int y1Quadrant = (int)((monster[1] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		int y2Quadrant = (int)((monster[1] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		//move him acording to its direction until he hits an obstacle
+	//find the current position of the monster
+	int x1Quadrant = (int)((monster[0] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
+	int x2Quadrant = (int)((monster[0] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
+	int y1Quadrant = (int)((monster[1] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
+	int y2Quadrant = (int)((monster[1] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
+	//move him acording to its direction until he hits an obstacle
+	if (monster[2] == 1)
+	{
+		if (keyStates['j']){
+			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
+					monster[0] -= 2 / squareSize;
+			}
+		}
+		if (keyStates['l']){
+			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
+					monster[0] += 2 / squareSize;
+				}
+		}
+		if (keyStates['i']){
+			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+					monster[1] -= 2 / squareSize;
+				}
+		}
+		if (keyStates['k']){
+			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
+					monster[1] += 2 / squareSize;
+				}
+		}
+	}
+	else if (monster[2] == 2)
+	{
+		if (keyStates['f']){
+			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
+					monster[0] -= 2 / squareSize;
+			}
+		}
+		if (keyStates['h']){
+			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
+					monster[0] += 2 / squareSize;
+				}
+		}
+		if (keyStates['t']){
+			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+					monster[1] -= 2 / squareSize;
+				}
+		}
+		if (keyStates['g']){
+			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
+					monster[1] += 2 / squareSize;
+				}
+		}
+	}
+		//COMMENTING OUT RANDOM GHOST MOVEMENT******************
+		/*
 		switch ((int)monster[2]){
 		case 1:
 			if (!bitmap.at(x1Quadrant).at((int)monster[1])){ 
-				monster[0] -= 1 / squareSize;
+				monster[0] -= 2 / squareSize;
 			}else {
 				int current = monster[2];
 				do{
@@ -188,7 +239,7 @@ void updateMonster(float* monster, int id){
 			break;
 		case 2:
 			if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-				monster[0] += 1 / squareSize;
+				monster[0] += 2 / squareSize;
 			}
 			else {
 				int current = monster[2];
@@ -199,7 +250,7 @@ void updateMonster(float* monster, int id){
 			break;
 		case 3:
 			if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-				monster[1] -= 1 / squareSize;
+				monster[1] -= 2 / squareSize;
 			}
 			else {
 				int current = monster[2];
@@ -210,7 +261,7 @@ void updateMonster(float* monster, int id){
 			break;
 		case 4:
 			if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-				monster[1] += 1 / squareSize;
+				monster[1] += 2 / squareSize;
 			}
 			else {
 				int current = monster[2];
@@ -222,6 +273,7 @@ void updateMonster(float* monster, int id){
 		default:
 			break;
 		}
+		*/
 }
 
 //Method to set the pressed key
@@ -241,9 +293,11 @@ void resetGame(){
 	yIncrement = 0; 
 	rotation = 0;
 	monster1 = new float[3] {10.5, 8.5, 1.0};
+
+	//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)
 	monster2 = new float[3] {13.5, 1.5, 2.0};
-	monster3 = new float[3] {4.5, 6.5, 3.0};
-	monster4 = new float[3] {2.5, 13.5, 4.0};
+	// monster3 = new float[3] {4.5, 6.5, 3.0};
+	// monster4 = new float[3] {2.5, 13.5, 4.0};
 	points = 0;
 	for (int i = 0; i < 256; i++){
 		keyStates[i] = false;
@@ -253,22 +307,16 @@ void resetGame(){
 
 //Method to update the movement of the pacman according to the movement keys pressed
 void keyOperations(){
-	//get current position
-	float x = (1.5 + xIncrement) * squareSize;
+	//get current position OF PACMAN
+	float  x = (1.5 + xIncrement) * squareSize;
 	float y = (1.5 + yIncrement) * squareSize;
-	
-	//update according to keys pressed
+
 	if (keyStates['a']){
 		x -= 2;
 		int x1Quadrant = (int)((x - 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
 		if (!bitmap.at(x1Quadrant).at((int)y/squareSize)){
 			xIncrement -= 2 / squareSize;
 			rotation = 2;
-			// edits
-			keyStates['d'] = false;
-			keyStates['w'] = false;
-			keyStates['s'] = false;
-			//keyStates['a'] = false; //check
 		}
 	}
 	if (keyStates['d']){
@@ -277,59 +325,32 @@ void keyOperations(){
 		if (!bitmap.at(x2Quadrant).at((int)y / squareSize)){
 			xIncrement += 2 / squareSize;
 			rotation = 0;
-			// edits
-                        keyStates['a'] = false;
-                        keyStates['w'] = false;
-                        keyStates['s'] = false;
-			//keyStates['d'] = false; //check
 		}
 	}
 	if (keyStates['w']){
 		y -= 2;
 		int y1Quadrant = (int)((y - 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		//if (!bitmap.at(y1Quadrant).at((int)x / squareSize)){ // my edit which did not work
-		if (!bitmap.at((int)x/squareSize).at(y1Quadrant)){ 
+		if (!bitmap.at((int)x/squareSize).at(y1Quadrant)){
 			yIncrement -= 2 / squareSize;
 			rotation = 3;
-			// edits
-                        keyStates['d'] = false;
-                        keyStates['a'] = false;
-                        keyStates['s'] = false;
-			//keyStates['w'] = false; //check
 		}
 	}
 	if (keyStates['s']){
 		y += 2;
 		int y2Quadrant = (int)((y + 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		//if (!bitmap.at(y2Quadrant).at((int)x / squareSize)){
 		if (!bitmap.at((int)x / squareSize).at(y2Quadrant)){
 			yIncrement += 2 / squareSize;
 			rotation = 1;
-			// edits
-                        keyStates['d'] = false;
-                        keyStates['w'] = false;
-                        keyStates['a'] = false;
-			//keyStates['s'] = false; //check
 		}
 	}
 	if (keyStates[' ']){
-		/*
-		if (!replay && !over){
+		if (!replay && over){
 			resetGame();
 			replay = true;
-			keyStates[' '] = false; //edit
 		}
 		else if (replay && over){
-			resetGame();
-			over = false;
-			keyStates[' '] = false; //edit
+			replay = false;
 		}
-		*/
-		resetGame();
-		replay = true;
-	}
-	if (keyStates['q']){
-		quit = true;
 	}
 }
 
@@ -339,24 +360,28 @@ void gameOver(){
 	int pacmanY = (int)(1.5 + yIncrement);
 	int monster1X = (int)(monster1[0]);
 	int monster1Y = (int)(monster1[1]);
+
+	//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)********************
 	int monster2X = (int)(monster2[0]);
 	int monster2Y = (int)(monster2[1]);
-	int monster3X = (int)(monster3[0]);
-	int monster3Y = (int)(monster3[1]);
-	int monster4X = (int)(monster4[0]);
-	int monster4Y = (int)(monster4[1]);
+	//int monster3X = (int)(monster3[0]);
+	//int monster3Y = (int)(monster3[1]);
+	//int monster4X = (int)(monster4[0]);
+	//int monster4Y = (int)(monster4[1]);
 	if (pacmanX == monster1X && pacmanY == monster1Y){
 		over = true;
 	}
+
+	//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)*********************
 	if (pacmanX == monster2X && pacmanY == monster2Y){
 		over = true;
 	}
-	if (pacmanX == monster3X && pacmanY == monster3Y){
-		over = true;
-	}
-	if (pacmanX == monster4X && pacmanY == monster4Y){
-		over = true;
-	}
+	// if (pacmanX == monster3X && pacmanY == monster3Y){
+	// 	over = true;
+	// }
+	// if (pacmanX == monster4X && pacmanY == monster4Y){
+	// 	over = true;
+	// }
 	if (points == 106){
 		over = true;
 	}
@@ -364,184 +389,118 @@ void gameOver(){
 
 //Method to display the results of the game at the ends
 void resultsDisplay(){
-	//works at this point
-	glClearColor(0, 0.2, 0.4, 1.0);
 	if (points == 106){
 		//Won
-		string text = "*************************************";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		char* message = "*************************************";
 		glRasterPos2f(170, 250);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "CONGRATULATIONS, YOU WON! ";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "CONGRATULATIONS, YOU WON! ";
 		glColor3f(1, 1, 1);
 		glRasterPos2f(200, 300);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "*************************************";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "*************************************";
 		glRasterPos2f(170, 350);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "To start or restart the game, press the space key.";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "To start or restart the game, press the space key.";
 		glRasterPos2f(170, 550);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-		delete [] message;
 	}else {
 		//Lost
-		string text = "*************************";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		char* message = "*************************";
 		glRasterPos2f(210, 250);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "SORRY, YOU LOST ... ";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "SORRY, YOU LOST ... ";
 		glColor3f(1, 1, 1);
 		glRasterPos2f(250, 300);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "*************************";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "*************************";
 		glRasterPos2f(210, 350);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "You got: ";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "You got: ";
 		glRasterPos2f(260, 400);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
 		string result = to_string(points);
-		message = new char[result.length()+1];
-		strcpy(message, result.c_str());
-
+		message = (char*)result.c_str();
 		glRasterPos2f(350, 400);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = " points!";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = " points!";
 		glRasterPos2f(385, 400);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-		delete [] message;
-		text = "To start or restart the game, press the space key.";
-		message = new char[text.length()+1];
-		strcpy(message, text.c_str());
-
+		message = "To start or restart the game, press the space key.";
 		glRasterPos2f(170, 550);
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-		delete [] message;
 	}
 }
 
 //Method to display the starting instructions
 void welcomeScreen(){
 	glClearColor(0, 0.2, 0.4, 1.0);
-	string text = "*************************************";
-	message = new char[text.length()+1];
-	strcpy(message, text.c_str());
-
+	char* message = "*************************************";
 	glRasterPos2f(150, 200);
 	while (*message)
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-	delete [] message; 
-	text = "PACMAN - by Patricia Terol";
-	message = new char[text.length()+1];
-	strcpy(message, text.c_str());
-
+	message = "PACMAN - by Patricia Terol";
 	glColor3f(1, 1, 1);
 	glRasterPos2f(225, 250);
 	while (*message)
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-	delete [] message;
-	text = "*************************************";
-	message = new char[text.length()+1];
-        strcpy(message, text.c_str());
-
+	message = "*************************************";
 	glRasterPos2f(150, 300);
 	while (*message)
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-	delete [] message;
-	text = "To control Pacman use A to go right, D to go left, W to go up and S to go down.";
-	message = new char[text.length()+1];
-        strcpy(message, text.c_str());
-
+	message = "To control Pacman use A to go right, D to go left, W to go up and S to go down.";
 	glRasterPos2f(50, 400);
 	while (*message)
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-	delete [] message;
-	text = "To start or restart the game, press the space key.";
-	message = new char[text.length()+1];
-        strcpy(message, text.c_str());
-
+	message = "To start or restart the game, press the space key.";
 	glRasterPos2f(170, 450);
 	while (*message)
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-	delete [] message;
 }
 
 //Method to display the screen and its elements
 void display(){
-	/*
-	if (points < 106){
+	if (points == 1){
 		over = false;
 	}
-	*/
-
 	keyOperations();
 	glClear(GL_COLOR_BUFFER_BIT);
 	gameOver();
-
 	if (replay){
 		if (!over){
 			drawLaberynth();
 			drawFood((1.5 + xIncrement) * squareSize, (1.5 + yIncrement) * squareSize);
 			drawPacman(1.5 + xIncrement, 1.5 + yIncrement, rotation);
 			updateMonster(monster1, 1);
+
+			//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)************************
 			updateMonster(monster2, 2);
-			updateMonster(monster3, 3);
-			updateMonster(monster4, 4);
+			// updateMonster(monster3, 3);
+			// updateMonster(monster4, 4);
 			drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
+
+			//STARTING OFF WITH ONE GHOST (COMMENTED OUT THE REST)**********************
 			drawMonster(monster2[0], monster2[1], 1.0, 0.0, 0.0); //red
-			drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
-			drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
+			// drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
+			// drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
 		}
 		else {
-			resultsDisplay(); //segfault in this function
+			resultsDisplay();
 		}
 	}
 	else {
 		welcomeScreen();
-
 	}
 	glutSwapBuffers();
 }
@@ -571,12 +530,12 @@ int main(int argc, char** argv){
 	glutReshapeFunc(reshape);
 	glutIdleFunc(display);
 	glutKeyboardFunc(keyPressed);
-	//glutKeyboardFunc(keyUp); //issue with the unpressing of keys
+	//NOTE: THIS FUNCTION MIGHT WORK BETTER ON MAC - IT WAS THE ONLY COMMAND NOT RECOGNIZED WHEN COMPILED WITH GLUT ON WINDOWS***********
+	glutKeyboardUpFunc(keyUp);
 
 	//run the game
 	init();
 	glutMainLoop();
-
 	return 0;
 }
 
