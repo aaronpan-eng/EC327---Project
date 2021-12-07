@@ -3,22 +3,23 @@
 // Project: assign10
 
 // MODIFIED FOR EC327 PROJECT******************
+//Group Members: Aaron, Vaibhavi, Kojo, Noah, Melissa
 
 #include <stdlib.h>
 #include <vector>
 #include <deque>
-#include <windows.h>
+//#include <windows.h>
 //#include <GLUT/glut.h>
 #include <iostream>
 #include <string>
-#include <C:/MinGW/include/GL/gl.h>
-#include <C:/MinGW/include/GL/glu.h>
-#include <C:/MinGW/include/GL/glext.h>
-#include <C:/MinGW/include/GL/glut.h>
+#define GL_SILENCE_DEPRECATION
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
+#include <GLUT/glut.h>
 using namespace std;
-
 
 //power mode counter
 //************************************************************************
@@ -128,8 +129,8 @@ void drawFood(float pacmanX, float pacmanY){
     food.swap(temp);
 
     int powerupCount = powerup.size();
-	
-	for (int i = 0; i < powerup.size(); i = i + 2){
+    
+    for (int i = 0; i < powerup.size(); i = i + 2){
                 if (!foodEaten(powerup.at(i)*squareSize, powerup.at(i + 1)*squareSize, pacmanX, pacmanY)){
                         Ptemp.push_back(powerup.at(i));
                         Ptemp.push_back(powerup.at(i + 1));
@@ -140,8 +141,8 @@ void drawFood(float pacmanX, float pacmanY){
         }
         powerup.swap(Ptemp);
 
-	if(powerupCount > powerup.size())
-		powermode = 1000;
+    if(powerupCount > powerup.size())
+        powermode = 1000;
     
     glPointSize(5.0);
     glBegin(GL_POINTS);
@@ -153,13 +154,13 @@ void drawFood(float pacmanX, float pacmanY){
     glEnd();
 
     glPointSize(15.0);
-	glBegin(GL_POINTS);
-	glColor3f(1, 0, 0);
-	for(int i = 0; i < powerup.size(); i = i + 2){
-		glVertex2f(powerup.at(i)*squareSize, powerup.at(i + 1)*squareSize);
-	}
+    glBegin(GL_POINTS);
+    glColor3f(1, 0, 0);
+    for(int i = 0; i < powerup.size(); i = i + 2){
+        glVertex2f(powerup.at(i)*squareSize, powerup.at(i + 1)*squareSize);
+    }
 
-	glEnd();
+    glEnd();
 }
 
 //Method to draw the pacman character through consicutive circle algorithm
@@ -223,34 +224,22 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates['j']){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
-                if (!powermode)
                     monster[0] -= 2 / squareSize;
-                else
-                    monster[0] -= 1 / squareSize;
             }
         }
         if (keyStates['l']){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                if (!powermode)
-                    monster[0] -= 2 / squareSize;
-                else
-                    monster[0] -= 1 / squareSize;
+                    monster[0] += 2 / squareSize;
                 }
         }
         if (keyStates['i']){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-                if (!powermode)
                     monster[1] -= 2 / squareSize;
-                else
-                    monster[1] -= 1 / squareSize;
                 }
         }
         if (keyStates['k']){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                if (!powermode)
-                    monster[1] -= 2 / squareSize;
-                else
-                    monster[1] -= 1 / squareSize;
+                    monster[1] += 2 / squareSize;
                 }
         }
     }
@@ -258,34 +247,22 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates['f']){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
-                if (!powermode)
                     monster[0] -= 2 / squareSize;
-                else
-                    monster[0] -= 1 / squareSize;
             }
         }
         if (keyStates['h']){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                if (!powermode)
-                    monster[0] -= 2 / squareSize;
-                else
-                    monster[0] -= 1 / squareSize;
+                    monster[0] += 2 / squareSize;
                 }
         }
         if (keyStates['t']){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-                if (!powermode)
                     monster[1] -= 2 / squareSize;
-                else
-                    monster[1] -= 1 / squareSize;
                 }
         }
         if (keyStates['g']){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                if (!powermode)
-                    monster[1] -= 2 / squareSize;
-                else
-                    monster[1] -= 1 / squareSize;
+                    monster[1] += 2 / squareSize;
                 }
         }
     }
@@ -293,34 +270,22 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates[49]){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
-                if (!powermode)
                     monster[0] -= 2 / squareSize;
-                else
-                    monster[0] -= 1 / squareSize;
             }
         }
         if (keyStates[50]){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                if (!powermode)
-                    monster[0] -= 2 / squareSize;
-                else
-                    monster[0] -= 1 / squareSize;
+                    monster[0] += 2 / squareSize;
                 }
         }
         if (keyStates[51]){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-                if (!powermode)
                     monster[1] -= 2 / squareSize;
-                else
-                    monster[1] -= 1 / squareSize;
                 }
         }
         if (keyStates[52]){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                if (!powermode)
-                    monster[1] -= 2 / squareSize;
-                else
-                    monster[1] -= 1 / squareSize;
+                    monster[1] += 2 / squareSize;
                 }
         }
     }
@@ -392,6 +357,9 @@ void resetGame(){
     xIncrement = 0;
     yIncrement = 0;
     rotation = 0;
+    null1 = false;
+    null2 = false;
+    null3 = false;
     monster1 = new float[3] {10.5, 8.5, 1.0};
 
     //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
@@ -404,7 +372,7 @@ void resetGame(){
     }
     food = { 1.5, 1.5, 1.5, 2.5, 1.5, 3.5, 1.5, 4.5, 1.5, 5.5, 1.5, 6.5, 1.5, 7.5, 1.5, 8.5, 1.5, 9.5, 1.5, 10.5, 1.5, 11.5, 1.5, 12.5, 2.5, 1.5, 2.5, 6.5, 2.5, 9.5, 2.5, 13.5, 3.5, 1.5, 3.5, 2.5, 3.5, 3.5, 3.5, 4.5, 3.5, 6.5, 3.5, 8.5, 3.5, 9.5, 3.5, 10.5, 3.5, 11.5, 3.5, 13.5, 4.5, 1.5, 4.5, 4.5, 4.5, 5.5, 4.5, 6.5, 4.5, 7.5, 4.5, 8.5, 4.5, 11.5, 4.5, 12.5, 4.5, 13.5, 5.5, 1.5, 5.5, 2.5, 5.5, 5.5, 5.5, 10.5, 5.5, 11.5, 5.5, 13.5, 6.5, 2.5, 6.5, 3.5, 6.5, 4.5, 6.5, 5.5, 6.5, 7.5, 6.5, 10.5, 6.5, 13.5, 7.5, 5.5, 7.5, 6.5, 7.5, 7.5, 7.5, 9.5, 7.5, 10.5, 7.5, 11.5, 7.5, 12.5, 7.5, 13.5, 8.5, 2.5, 8.5, 3.5, 8.5, 4.5, 8.5, 5.5, 8.5, 7.5, 8.5, 10.5, 8.5, 13.5, 9.5, 1.5, 9.5, 2.5, 9.5, 5.5, 9.5, 10.5, 9.5, 11.5, 9.5, 13.5, 10.5, 1.5, 10.5, 4.5, 10.5, 5.5, 10.5, 6.5, 10.5, 7.5, 10.5, 8.5, 10.5, 11.5, 10.5, 12.5, 10.5, 13.5, 11.5, 1.5, 11.5, 2.5, 11.5, 3.5, 11.5, 4.5, 11.5, 5.5, 11.5, 6.5, 11.5, 8.5, 11.5, 9.5, 11.5, 10.5, 11.5, 11.5, 11.5, 13.5, 12.5, 1.5, 12.5, 6.5, 12.5, 9.5, 12.5, 13.5, 13.5, 2.5, 13.5, 3.5, 13.5, 4.5, 13.5, 5.5, 13.5, 6.5, 13.5, 7.5, 13.5, 8.5, 13.5, 9.5, 13.5, 10.5, 13.5, 11.5, 13.5, 12.5};
 
-	powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5};
+    powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5};
 }
 
 //Method to update the movement of the pacman according to the movement keys pressed
@@ -458,39 +426,39 @@ void keyOperations(){
 
 //Method to check if the game is over
 void gameOver(){
-	int pacmanX = (int)(1.5 + xIncrement);
-	int pacmanY = (int)(1.5 + yIncrement);
-	int monster1X = (int)(monster1[0]);
-	int monster1Y = (int)(monster1[1]);
-	int monster2X = (int)(monster2[0]);
-	int monster2Y = (int)(monster2[1]);
-	int monster3X = (int)(monster3[0]);
-	int monster3Y = (int)(monster3[1]);
-	
-	//***********************************************************************
-	if(!powermode){
-		if(!null1){
-			if (pacmanX == monster1X && pacmanY == monster1Y){
-				over = true;
-			}
-		}
-		if(!null2){
-			if (pacmanX == monster2X && pacmanY == monster2Y){
-				over = true;
-			}
-		}
-		if(!null3){
-			if (pacmanX == monster3X && pacmanY == monster3Y){
-				over = true;
-			}
-		}
-	
-	}
-	//i am putting powermode in the gameOver function for now
-	//might be better to put it in a separate function
-	else{
-		if (pacmanX == monster1X && pacmanY == monster1Y){
-			null1 = true;
+    int pacmanX = (int)(1.5 + xIncrement);
+    int pacmanY = (int)(1.5 + yIncrement);
+    int monster1X = (int)(monster1[0]);
+    int monster1Y = (int)(monster1[1]);
+    int monster2X = (int)(monster2[0]);
+    int monster2Y = (int)(monster2[1]);
+    int monster3X = (int)(monster3[0]);
+    int monster3Y = (int)(monster3[1]);
+    
+    //***********************************************************************
+    if(!powermode){
+        if(!null1){
+            if (pacmanX == monster1X && pacmanY == monster1Y){
+                over = true;
+            }
+        }
+        if(!null2){
+            if (pacmanX == monster2X && pacmanY == monster2Y){
+                over = true;
+            }
+        }
+        if(!null3){
+            if (pacmanX == monster3X && pacmanY == monster3Y){
+                over = true;
+            }
+        }
+    
+    }
+    //i am putting powermode in the gameOver function for now
+    //might be better to put it in a separate function
+    else{
+        if (pacmanX == monster1X && pacmanY == monster1Y){
+            null1 = true;
         }
         if (pacmanX == monster2X && pacmanY == monster2Y){
             null2 = true;
@@ -499,12 +467,12 @@ void gameOver(){
             null3 = true;
                 }
     
-	}
+    }
 
     if (points == 106){
         over = true;
     }
-	//*********************************************************************************
+    //*********************************************************************************
 
 
 }
@@ -565,7 +533,7 @@ void resultsDisplay(){
     }
 }
 
-//DISPLAYING WELCOME SCREEN WITH TEAM MEMBER NAMES AND INSTRUCTIONS 
+//DISPLAYING WELCOME SCREEN WITH TEAM MEMBER NAMES AND INSTRUCTIONS
 void welcomeScreen(){
     glClearColor(0, 0.2, 0.4, 1.0);
     char* message = "*************************************";
@@ -630,28 +598,28 @@ void display(){
 
             //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
             if(powermode){
-				if(!null1)
-					drawMonster(monster1[0], monster1[1], 1.0, 1.0, 1.0); //all are white in power mode
-	            if(!null2)
-					drawMonster(monster2[0], monster2[1], 1.0, 1.0, 1.0); 
-        	    if(!null3)
-					drawMonster(monster3[0], monster3[1], 1.0, 1.0, 1.0); 
+                if(!null1)
+                    drawMonster(monster1[0], monster1[1], 1.0, 1.0, 1.0); //all are white in power mode
+                if(!null2)
+                    drawMonster(monster2[0], monster2[1], 1.0, 1.0, 1.0);
+                if(!null3)
+                    drawMonster(monster3[0], monster3[1], 1.0, 1.0, 1.0);
                 /*
                 if(!null4)
-					drawMonster(monster4[0], monster4[1], 1.0, 1.0, 1.0); 
-				*/
+                    drawMonster(monster4[0], monster4[1], 1.0, 1.0, 1.0);
+                */
                 powermode = powermode - 1;
-			}
-			else{
-				if(!null1)
-					drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
-				if(!null2)
-					drawMonster(monster2[0], monster2[1], 1.0, 0.0, 0.0); //red
-				if(!null3)
-					drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
-				/*
+            }
+            else{
+                if(!null1)
+                    drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
+                if(!null2)
+                    drawMonster(monster2[0], monster2[1], 1.0, 0.0, 0.0); //red
+                if(!null3)
+                    drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
+                /*
                 if(!null4)
-					drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
+                    drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
                 */
             }
         }
@@ -698,4 +666,3 @@ int main(int argc, char** argv){
     glutMainLoop();
     return 0;
 }
-
