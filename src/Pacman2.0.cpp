@@ -7,17 +7,27 @@
 #include <stdlib.h>
 #include <vector>
 #include <deque>
-//#include <windows.h>
-#include <GLUT/glut.h>
+#include <windows.h>
+//#include <GLUT/glut.h>
 #include <iostream>
 #include <string>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
+#include <C:/MinGW/include/GL/gl.h>
+#include <C:/MinGW/include/GL/glu.h>
+#include <C:/MinGW/include/GL/glext.h>
+#include <C:/MinGW/include/GL/glut.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 using namespace std;
+
+
+//power mode counter
+//************************************************************************
+static int powermode = 0;
+
+static bool null1 = false;
+static bool null2 = false;
+static bool null3 = false;
+//******************************************************************************
 
 static bool replay = false; //check if starts a new game
 static bool over = true; //check for the game to be over
@@ -381,35 +391,55 @@ void keyOperations(){
 
 //Method to check if the game is over
 void gameOver(){
-    int pacmanX = (int)(1.5 + xIncrement);
-    int pacmanY = (int)(1.5 + yIncrement);
+	int pacmanX = (int)(1.5 + xIncrement);
+	int pacmanY = (int)(1.5 + yIncrement);
+	int monster1X = (int)(monster1[0]);
+	int monster1Y = (int)(monster1[1]);
+	int monster2X = (int)(monster2[0]);
+	int monster2Y = (int)(monster2[1]);
+	int monster3X = (int)(monster3[0]);
+	int monster3Y = (int)(monster3[1]);
+	
+	//***********************************************************************
+	if(!powermode){
+		if(!null1){
+			if (pacmanX == monster1X && pacmanY == monster1Y){
+				over = true;
+			}
+		}
+		if(!null2){
+			if (pacmanX == monster2X && pacmanY == monster2Y){
+				over = true;
+			}
+		}
+		if(!null3){
+			if (pacmanX == monster3X && pacmanY == monster3Y){
+				over = true;
+			}
+		}
+		if (points == 106){
+			over = true;
+		}
+	}
+	//i am putting powermode in the gameOver function for now
+	//might be better to put it in a separate function
+	else{
+		if (pacmanX == monster1X && pacmanY == monster1Y){
+			null1 = true;
+                }
+                if (pacmanX == monster2X && pacmanY == monster2Y){
+                        null2 = true;
+                }
+                if (pacmanX == monster3X && pacmanY == monster3Y){
+                        null3 = true;
+                }
+                if (points == 106){
+                        over = true;
+                }
+	}
+	//*********************************************************************************
 
-    //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
-    int monster1X = (int)(monster1[0]);
-    int monster1Y = (int)(monster1[1]);
-    int monster2X = (int)(monster2[0]);
-    int monster2Y = (int)(monster2[1]);
-    int monster3X = (int)(monster3[0]);
-    int monster3Y = (int)(monster3[1]);
-    //int monster4X = (int)(monster4[0]);
-    //int monster4Y = (int)(monster4[1]);
 
-    //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
-    if (pacmanX == monster1X && pacmanY == monster1Y){
-        over = true;
-    }
-    if (pacmanX == monster2X && pacmanY == monster2Y){
-        over = true;
-    }
-    if (pacmanX == monster3X && pacmanY == monster3Y){
-        over = true;
-    }
-    // if (pacmanX == monster4X && pacmanY == monster4Y){
-    //     over = true;
-    // }
-    if (points == 106){
-        over = true;
-    }
 }
 
 //Method to display the results of the game at the ends
@@ -468,28 +498,45 @@ void resultsDisplay(){
     }
 }
 
-//Method to display the starting instructions
+//DISPLAYING WELCOME SCREEN WITH TEAM MEMBER NAMES AND INSTRUCTIONS 
 void welcomeScreen(){
     glClearColor(0, 0.2, 0.4, 1.0);
     char* message = "*************************************";
     glRasterPos2f(150, 200);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-    message = "PACMAN - by Patricia Terol";
+    message = "PACMAN 2.0 ";
     glColor3f(1, 1, 1);
-    glRasterPos2f(225, 250);
+    glRasterPos2f(300, 250);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
+    message = "- by Aaron Pan, Vaibhavi Hansrajani, Kwadwo Osafo, Melissa Gibble, Noah Taniguchi";
+    glColor3f(1, 1, 1);
+    glRasterPos2f(20, 300);
+    while (*message)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
     message = "*************************************";
-    glRasterPos2f(150, 300);
+    glRasterPos2f(150, 350);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-    message = "To control Pacman use A to go right, D to go left, W to go up and S to go down.";
-    glRasterPos2f(50, 400);
+    message = "To control Pacman use A (left), D (right), W (up), and S (down).";
+    glRasterPos2f(110, 400);
+    while (*message)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
+    message = "To control Ghost 1 use F (left), H (right), T (up), and G (down).";
+    glRasterPos2f(112, 450);
+    while (*message)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
+    message = "To control Ghost 2 use J (left), L (right), I (up), and K (down).";
+    glRasterPos2f(116, 500);
+    while (*message)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
+    message = "To control Ghost 3 use 1 (left), 2 (right), 3 (up), and 4 (down).";
+    glRasterPos2f(116, 550);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
     message = "To start or restart the game, press the space key.";
-    glRasterPos2f(170, 450);
+    glRasterPos2f(170, 600);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
 }
@@ -548,7 +595,7 @@ int main(int argc, char** argv){
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(750, 750);
     glutInitWindowPosition(500, 50);
-    glutCreateWindow("PACMAN - by Patricia Terol");
+    glutCreateWindow("PACMAN 2.0");
 
     //define all the control functions
     glutDisplayFunc(display);
