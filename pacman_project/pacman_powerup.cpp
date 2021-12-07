@@ -2,6 +2,9 @@
 // Course: CSE 2050
 // Project: assign10
 
+//This version contains the code for powerups
+//editted code is enclosed in *********************************************
+
 #include <stdlib.h>
 #include <vector>
 #include <deque>
@@ -14,11 +17,19 @@
 using namespace std;
 
 char * message = new char[1024];
+
 //power mode counter
+//************************************************************************
 static int powermode = 0;
 
-static bool quit = false;
-static bool first = true;
+static bool null1 = false;
+static bool null2 = false;
+static bool null3 = false;
+static bool null4 = false;
+//******************************************************************************
+//
+static bool quit = false; //ignore
+
 static bool replay = false; //check if starts a new game
 static bool over = false; //check for the game to be over
 static float squareSize = 50.0; //size of one square on the game
@@ -35,12 +46,14 @@ static vector<int> border = { 0, 0, 15, 1, 15, 15, 14, 1, 0, 14, 15, 15, 1, 14, 
 static vector<int> obstaclesTop = { 2, 2, 3, 6, 3, 6, 4, 5, 4, 2, 5, 4, 5, 3, 6, 5, 6, 1, 9, 2, 7, 2, 8, 5, 9, 5, 10, 3, 10, 4, 11, 2, 11, 5, 12, 6, 12, 6, 13, 2 };
 static vector<int> obstaclesMiddle = { 2, 9, 3, 7, 3, 7, 4, 8, 4, 9, 5, 11, 5, 6, 6, 10, 6, 10, 7, 8, 7, 8, 8, 9, 6, 7, 7, 6, 8, 6, 9, 7, 10, 6, 9, 10, 9, 10, 8, 8, 11, 9, 10, 11, 11, 8, 12, 7, 12, 7, 13, 9 };
 static vector<int> obstaclesBottom = { 2, 10, 3, 13, 3, 13, 4, 12, 5, 12, 6, 13, 6, 13, 7, 11, 8, 11, 9, 13, 9, 13, 10, 12, 11, 12, 12, 13, 12, 13, 13, 10 };
+
+//a few values were removed from here and moved to the powerup deque right below
+//***************************************
 static deque<float> food = { 1.5, 1.5, 1.5, 2.5, 1.5, 3.5, 1.5, 4.5, 1.5, 5.5, 1.5, 6.5, 1.5, 7.5, 1.5, 8.5, 1.5, 9.5, 1.5, 10.5, 1.5, 11.5, 1.5, 12.5, 2.5, 1.5, 2.5, 6.5, 2.5, 9.5, 2.5, 13.5, 3.5, 1.5, 3.5, 2.5, 3.5, 3.5, 3.5, 4.5, 3.5, 6.5, 3.5, 8.5, 3.5, 9.5, 3.5, 10.5, 3.5, 11.5, 3.5, 13.5, 4.5, 1.5, 4.5, 4.5, 4.5, 5.5, 4.5, 6.5, 4.5, 7.5, 4.5, 8.5, 4.5, 11.5, 4.5, 12.5, 4.5, 13.5, 5.5, 1.5, 5.5, 2.5, 5.5, 5.5, 5.5, 10.5, 5.5, 11.5, 5.5, 13.5, 6.5, 2.5, 6.5, 3.5, 6.5, 4.5, 6.5, 5.5, 6.5, 7.5, 6.5, 10.5, 6.5, 13.5, 7.5, 5.5, 7.5, 6.5, 7.5, 7.5, 7.5, 9.5, 7.5, 10.5, 7.5, 11.5, 7.5, 12.5, 7.5, 13.5, 8.5, 2.5, 8.5, 3.5, 8.5, 4.5, 8.5, 5.5, 8.5, 7.5, 8.5, 10.5, 8.5, 13.5, 9.5, 1.5, 9.5, 2.5, 9.5, 5.5, 9.5, 10.5, 9.5, 11.5, 9.5, 13.5, 10.5, 1.5, 10.5, 4.5, 10.5, 5.5, 10.5, 6.5, 10.5, 7.5, 10.5, 8.5, 10.5, 11.5, 10.5, 12.5, 10.5, 13.5, 11.5, 1.5, 11.5, 2.5, 11.5, 3.5, 11.5, 4.5, 11.5, 5.5, 11.5, 6.5, 11.5, 8.5, 11.5, 9.5, 11.5, 10.5, 11.5, 11.5, 11.5, 13.5, 12.5, 1.5, 12.5, 6.5, 12.5, 9.5, 12.5, 13.5, 13.5, 2.5, 13.5, 3.5, 13.5, 4.5, 13.5, 5.5, 13.5, 6.5, 13.5, 7.5, 13.5, 8.5, 13.5, 9.5, 13.5, 10.5, 13.5, 11.5, 13.5, 12.5};
 //power up test
 static deque<float> powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5};
+//*********************************************
 
-// original, 13.5, 13.5 };
-//removed to edit
 static vector<vector<bool>> bitmap; // 2d image of which squares are blocked and which are clear for pacman to move in 
 bool* keyStates = new bool[256]; // record of all keys pressed 
 int points = 0; // total points collected
@@ -105,7 +118,7 @@ bool foodEaten(int x, int y, float pacmanX, float pacmanY){
 //Method to draw all the food left and delete the ate one
 void drawFood(float pacmanX, float pacmanY){
 	deque<float> temp;
-	deque<float> Ptemp;
+	deque<float> Ptemp; //*************************************this line is new
 	//check if the food has not been eaten
 	for (int i = 0; i < food.size(); i = i + 2){
 		if (!foodEaten(food.at(i)*squareSize, food.at(i + 1)*squareSize, pacmanX, pacmanY)){
@@ -119,6 +132,7 @@ void drawFood(float pacmanX, float pacmanY){
 	food.swap(temp);
 
 	//checker for eaten power up
+	//*********************************************
 	int powerupCount = powerup.size();
 	
 	for (int i = 0; i < powerup.size(); i = i + 2){
@@ -135,7 +149,7 @@ void drawFood(float pacmanX, float pacmanY){
 	if(powerupCount > powerup.size())
 		powermode = 1000; //might tweak this number
 
-	//***
+	//****************************************************
 
 	glPointSize(5.0);
 	glBegin(GL_POINTS);
@@ -146,7 +160,8 @@ void drawFood(float pacmanX, float pacmanY){
 	}
 	glEnd();
 
-	//power up tests
+	//drawing powerups
+	//****************************************************
 	glPointSize(15.0);
 	glBegin(GL_POINTS);
 	glColor3f(1, 0, 0);
@@ -155,6 +170,7 @@ void drawFood(float pacmanX, float pacmanY){
 	}
 
 	glEnd();
+	//*******************************************************
 }
 
 //Method to draw the pacman character through consicutive circle algorithm
@@ -286,12 +302,13 @@ void resetGame(){
 	for (int i = 0; i < 256; i++){
 		keyStates[i] = false;
 	}
+	
+	//same changes as in the beginning
+	//**********************************************
 	food = { 1.5, 1.5, 1.5, 2.5, 1.5, 3.5, 1.5, 4.5, 1.5, 5.5, 1.5, 6.5, 1.5, 7.5, 1.5, 8.5, 1.5, 9.5, 1.5, 10.5, 1.5, 11.5, 1.5, 12.5, 2.5, 1.5, 2.5, 6.5, 2.5, 9.5, 2.5, 13.5, 3.5, 1.5, 3.5, 2.5, 3.5, 3.5, 3.5, 4.5, 3.5, 6.5, 3.5, 8.5, 3.5, 9.5, 3.5, 10.5, 3.5, 11.5, 3.5, 13.5, 4.5, 1.5, 4.5, 4.5, 4.5, 5.5, 4.5, 6.5, 4.5, 7.5, 4.5, 8.5, 4.5, 11.5, 4.5, 12.5, 4.5, 13.5, 5.5, 1.5, 5.5, 2.5, 5.5, 5.5, 5.5, 10.5, 5.5, 11.5, 5.5, 13.5, 6.5, 2.5, 6.5, 3.5, 6.5, 4.5, 6.5, 5.5, 6.5, 7.5, 6.5, 10.5, 6.5, 13.5, 7.5, 5.5, 7.5, 6.5, 7.5, 7.5, 7.5, 9.5, 7.5, 10.5, 7.5, 11.5, 7.5, 12.5, 7.5, 13.5, 8.5, 2.5, 8.5, 3.5, 8.5, 4.5, 8.5, 5.5, 8.5, 7.5, 8.5, 10.5, 8.5, 13.5, 9.5, 1.5, 9.5, 2.5, 9.5, 5.5, 9.5, 10.5, 9.5, 11.5, 9.5, 13.5, 10.5, 1.5, 10.5, 4.5, 10.5, 5.5, 10.5, 6.5, 10.5, 7.5, 10.5, 8.5, 10.5, 11.5, 10.5, 12.5, 10.5, 13.5, 11.5, 1.5, 11.5, 2.5, 11.5, 3.5, 11.5, 4.5, 11.5, 5.5, 11.5, 6.5, 11.5, 8.5, 11.5, 9.5, 11.5, 10.5, 11.5, 11.5, 11.5, 13.5, 12.5, 1.5, 12.5, 6.5, 12.5, 9.5, 12.5, 13.5, 13.5, 2.5, 13.5, 3.5, 13.5, 4.5, 13.5, 5.5, 13.5, 6.5, 13.5, 7.5, 13.5, 8.5, 13.5, 9.5, 13.5, 10.5, 13.5, 11.5, 13.5, 12.5};
-	//original
-	//, 13.5, 13.5 };
-	//to test power up
-	powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5};
 
+	powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5};
+	//****************************************************
 }
 
 //Method to update the movement of the pacman according to the movement keys pressed
@@ -308,6 +325,7 @@ void keyOperations(){
 			xIncrement -= 2 / squareSize;
 			rotation = 2;
 			// edits
+			// might not be necessary
 			keyStates['d'] = false;
 			keyStates['w'] = false;
 			keyStates['s'] = false;
@@ -380,47 +398,33 @@ void keyOperations(){
 void gameOver(){
 	int pacmanX = (int)(1.5 + xIncrement);
 	int pacmanY = (int)(1.5 + yIncrement);
-	int monster1X;
-	int monster1Y;
-	int monster2X;
-        int monster2Y;
-	int monster3X;
-        int monster3Y;
-	int monster4X;
-        int monster4Y;
-	if(monster1 != NULL){
-		int monster1X = (int)(monster1[0]);
-		int monster1Y = (int)(monster1[1]);
-	}
-	if(monster2 != NULL){
-		int monster2X = (int)(monster2[0]);
-		int monster2Y = (int)(monster2[1]);
-	}
-	if(monster3 != NULL){
-		int monster3X = (int)(monster3[0]);
-		int monster3Y = (int)(monster3[1]);
-	}
-	if(monster4 != NULL){
-		int monster4X = (int)(monster4[0]);
-		int monster4Y = (int)(monster4[1]);
-	}
+	int monster1X = (int)(monster1[0]);
+	int monster1Y = (int)(monster1[1]);
+	int monster2X = (int)(monster2[0]);
+	int monster2Y = (int)(monster2[1]);
+	int monster3X = (int)(monster3[0]);
+	int monster3Y = (int)(monster3[1]);
+	int monster4X = (int)(monster4[0]);
+	int monster4Y = (int)(monster4[1]);
+	
+	//***********************************************************************
 	if(!powermode){
-		if(monster1 != NULL){
+		if(!null1){
 			if (pacmanX == monster1X && pacmanY == monster1Y){
 				over = true;
 			}
 		}
-		if(monster2 != NULL){
+		if(!null2){
 			if (pacmanX == monster2X && pacmanY == monster2Y){
 				over = true;
 			}
 		}
-		if(monster3 != NULL){
+		if(!null3){
 			if (pacmanX == monster3X && pacmanY == monster3Y){
 				over = true;
 			}
 		}
-		if(monster4 != NULL){
+		if(!null4){
 			if (pacmanX == monster4X && pacmanY == monster4Y){
 				over = true;
 			}
@@ -433,25 +437,22 @@ void gameOver(){
 	//might be better to put it in a separate function
 	else{
 		if (pacmanX == monster1X && pacmanY == monster1Y){
-                        delete [] monster1;
-			monster1 = NULL;
+			null1 = true;
                 }
                 if (pacmanX == monster2X && pacmanY == monster2Y){
-                        delete [] monster2;
-			monster2 = NULL;
+                        null2 = true;
                 }
                 if (pacmanX == monster3X && pacmanY == monster3Y){
-                        delete [] monster3;
-			monster3 = NULL;
+                        null3 = true;
                 }
                 if (pacmanX == monster4X && pacmanY == monster4Y){
-                        delete [] monster4;
-			monster4 = NULL;
+                        null4 = true;
                 }
                 if (points == 106){
                         over = true;
                 }
 	}
+	//*********************************************************************************
 
 
 }
@@ -620,36 +621,37 @@ void display(){
 			drawLaberynth();
 			drawFood((1.5 + xIncrement) * squareSize, (1.5 + yIncrement) * squareSize);
 			drawPacman(1.5 + xIncrement, 1.5 + yIncrement, rotation);
-			if(monster1 != NULL)
-				updateMonster(monster1, 1);
-			if(monster2 != NULL)
-				updateMonster(monster2, 2);
-			if(monster3 != NULL)
-				updateMonster(monster3, 3);
-			if(monster4 != NULL)
-				updateMonster(monster4, 4);
+			updateMonster(monster1, 1);
+			updateMonster(monster2, 2);
+			updateMonster(monster3, 3);
+			updateMonster(monster4, 4);
+			
+			//i tweaked the earlier parts of this function a bit but only change this part
+			//those changes are irrelevant
+			//**************************************************************************************
 			if(powermode){
-				if(monster1 != NULL)
+				if(!null1)
 					drawMonster(monster1[0], monster1[1], 1.0, 1.0, 1.0); //all are white in power mode
-	                        if(monster2 != NULL)
+	                        if(!null2)
 					drawMonster(monster2[0], monster2[1], 1.0, 1.0, 1.0); 
-        	                if(monster3 != NULL)
+        	                if(!null3)
 					drawMonster(monster3[0], monster3[1], 1.0, 1.0, 1.0); 
-                	        if(monster4 != NULL)
+                	        if(!null4)
 					drawMonster(monster4[0], monster4[1], 1.0, 1.0, 1.0); 
 				powermode = powermode - 1;
 				//could consider changing background for powermode
 			}
 			else{
-				if(monster1 != NULL)
+				if(!null1)
 					drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
-				if(monster2 != NULL)
+				if(!null2)
 					drawMonster(monster2[0], monster2[1], 1.0, 0.0, 0.0); //red
-				if(monster3 != NULL)
+				if(!null3)
 					drawMonster(monster3[0], monster3[1], 1.0, 0.0, 0.6); //magenta
-				if(monster4 != NULL)
+				if(!null4)
 					drawMonster(monster4[0], monster4[1], 1.0, 0.3, 0.0); //orange
 			}
+			//*****************************************************************************************
 		}
 		else {
 			resultsDisplay(); //segfault in this function
