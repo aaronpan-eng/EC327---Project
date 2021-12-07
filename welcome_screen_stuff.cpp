@@ -1,5 +1,5 @@
-// Author: Patricia Terol
-// Course: CSE 2050
+// Author: Patricia Terol (MODIFIED BY AARON PAN, VAIBHAVI HANSRAJANI, NOAH TANIGUCHI, KWADWO OSAFO, MELISSA GIBBLE)
+// Course: CSE 2050 (MODIFIED FOR EC327 PROJECT AT BOSTON UNIVERISTY)
 // Project: assign10
 
 // MODIFIED FOR EC327 PROJECT******************
@@ -10,6 +10,7 @@
 //*********************************************************************
 
 //**********GO TO LINE 481 FOR WELCOME SCREEN FUNCTION*****************
+//**********Go TO LINE 578 FOR THE WINDOW NAME*************************
 //WILL COPY AND PASTE THIS NEW WELCOME SCREEN INTO THE FINAL C0DE
 
 // #include <stdlib.h>
@@ -574,9 +575,9 @@ void welcomeScreen(){
 //     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 //     glutInitWindowSize(750, 750);
 //     glutInitWindowPosition(500, 50);
-//     glutCreateWindow("PACMAN - by Patricia Terol");
+    glutCreateWindow("PACMAN 2.0");
 
-//     //define all the control functions
+    // define all the control functions
 //     glutDisplayFunc(display);
 //     glutReshapeFunc(reshape);
 //     glutIdleFunc(display);
