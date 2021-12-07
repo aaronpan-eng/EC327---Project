@@ -223,22 +223,34 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates['j']){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
+                if (!powermode)
                     monster[0] -= 2 / squareSize;
+                else
+                    monster[0] -= 1 / squareSize;
             }
         }
         if (keyStates['l']){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                    monster[0] += 2 / squareSize;
+                if (!powermode)
+                    monster[0] -= 2 / squareSize;
+                else
+                    monster[0] -= 1 / squareSize;
                 }
         }
         if (keyStates['i']){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+                if (!powermode)
                     monster[1] -= 2 / squareSize;
+                else
+                    monster[1] -= 1 / squareSize;
                 }
         }
         if (keyStates['k']){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                    monster[1] += 2 / squareSize;
+                if (!powermode)
+                    monster[1] -= 2 / squareSize;
+                else
+                    monster[1] -= 1 / squareSize;
                 }
         }
     }
@@ -246,22 +258,34 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates['f']){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
+                if (!powermode)
                     monster[0] -= 2 / squareSize;
+                else
+                    monster[0] -= 1 / squareSize;
             }
         }
         if (keyStates['h']){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                    monster[0] += 2 / squareSize;
+                if (!powermode)
+                    monster[0] -= 2 / squareSize;
+                else
+                    monster[0] -= 1 / squareSize;
                 }
         }
         if (keyStates['t']){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+                if (!powermode)
                     monster[1] -= 2 / squareSize;
+                else
+                    monster[1] -= 1 / squareSize;
                 }
         }
         if (keyStates['g']){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                    monster[1] += 2 / squareSize;
+                if (!powermode)
+                    monster[1] -= 2 / squareSize;
+                else
+                    monster[1] -= 1 / squareSize;
                 }
         }
     }
@@ -269,22 +293,34 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates[49]){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
+                if (!powermode)
                     monster[0] -= 2 / squareSize;
+                else
+                    monster[0] -= 1 / squareSize;
             }
         }
         if (keyStates[50]){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                    monster[0] += 2 / squareSize;
+                if (!powermode)
+                    monster[0] -= 2 / squareSize;
+                else
+                    monster[0] -= 1 / squareSize;
                 }
         }
         if (keyStates[51]){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
+                if (!powermode)
                     monster[1] -= 2 / squareSize;
+                else
+                    monster[1] -= 1 / squareSize;
                 }
         }
         if (keyStates[52]){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                    monster[1] += 2 / squareSize;
+                if (!powermode)
+                    monster[1] -= 2 / squareSize;
+                else
+                    monster[1] -= 1 / squareSize;
                 }
         }
     }
