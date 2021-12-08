@@ -1,34 +1,40 @@
-// Author: Patricia Terol
-// Course: CSE 2050
+// Author: Patricia Terol (MODIFIED BY AARON PAN, VAIBHAVI HANSRAJANI, NOAH TANIGUCHI, KWADWO OSAFO, MELISSA GIBBLE)
+// Course: CSE 2050 (MODIFIED FOR EC327 PROJECT AT BOSTON UNIVERISTY)
 // Project: assign10
+//********************************************************
+//************MODIFIED FOR EC327 PROJECT******************
+//********************************************************
+//NOTES: - COMMENTS OF EDITS MADE IN ALL CAPS
+//       - AS OF THIS VERSION: THIS CODE IS MADE TO COMPILE FOR XCODE ON MAC WITH THE 'OpenGL.Framework' AND 'GLUT.Framework'
 
-// MODIFIED FOR EC327 PROJECT******************
-//Group Members: Aaron, Vaibhavi, Kojo, Noah, Melissa
+//MAIN EDITS: - MADE GHOSTS USER CONTROLLED FOR MULTIPLAYER PACMAN
+//            - ADDED POWERUPS SO PACMAN COULD EAT GHOSTS AND GHOSTS WOULD SLOW DOWN
+//            - EDITED WELCOME SCREEN
 
 #include <stdlib.h>
 #include <vector>
 #include <deque>
-//#include <windows.h>
-//#include <GLUT/glut.h>
+//#include <windows.h> //HAD TO COMMENT OUT FOR COMPILATION ON MAC
+//#include <GL/glut.h> //HAD TO COMMENT OUT FOR COMPILATION ON MAC
 #include <iostream>
 #include <string>
 #define GL_SILENCE_DEPRECATION
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
+#include <OpenGL/gl.h> //THESE HEADER FILES FOR XCODE ON MAC
+#include <OpenGL/glu.h> //THESE HEADER FILES FOR XCODE ON MAC
+#include <OpenGL/glext.h> //THESE HEADER FILES FOR XCODE ON MAC
+#include <GLUT/glut.h> //THESE HEADER FILES FOR XCODE ON MAC
 using namespace std;
 
-//power mode counter
-//************************************************************************
+//POWER MODE COUNTER: 0 FOR NO POWERUP, ABOVE 0 FOR POWERUP ACTIVATED, SERVES AS TIMER AS WELL
 static int powermode = 0;
 
-static bool null1 = false;
-static bool null2 = false;
-static bool null3 = false;
-//******************************************************************************
+//STATES FOR DISPLAYING THE GHOSTS; (TRUE -> DONT DISPLAY GHOST; FALSE -> DISPLAY GHOST)
+static bool null1 = false; //SETS GHOST 1 TO DISPLAY
+static bool null2 = false; //SETS GHOST 1 TO DISPLAY
+static bool null3 = false; //SETS GHOST 1 TO DISPLAY
+
 
 static bool replay = false; //check if starts a new game
 static bool over = true; //check for the game to be over
@@ -37,7 +43,7 @@ static float xIncrement = 0; // x movement on pacman
 static float yIncrement = 0; // y movement on pacman
 static int rotation = 0; // orientation of pacman
 
-//USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+//USING 3 USER CONTROLLED GHOSTS (COMMENTED OUT THE 4TH)
 float* monster1 = new float[3] {10.5, 8.5, 1.0}; //coordinates and direction of first monster
 float* monster2 = new float[3] {13.5, 1.5, 2.0}; //coordinates and direction of second monster
 float* monster3 = new float[3] {4.5, 6.5, 3.0}; //coordinates and direction of third monster
@@ -49,7 +55,7 @@ static vector<int> obstaclesTop = { 2, 2, 3, 6, 3, 6, 4, 5, 4, 2, 5, 4, 5, 3, 6,
 static vector<int> obstaclesMiddle = { 2, 9, 3, 7, 3, 7, 4, 8, 4, 9, 5, 11, 5, 6, 6, 10, 6, 10, 7, 8, 7, 8, 8, 9, 6, 7, 7, 6, 8, 6, 9, 7, 10, 6, 9, 10, 9, 10, 8, 8, 11, 9, 10, 11, 11, 8, 12, 7, 12, 7, 13, 9 };
 static vector<int> obstaclesBottom = { 2, 10, 3, 13, 3, 13, 4, 12, 5, 12, 6, 13, 6, 13, 7, 11, 8, 11, 9, 13, 9, 13, 10, 12, 11, 12, 12, 13, 12, 13, 13, 10 };
 static deque<float> food = { 1.5, 1.5, 1.5, 2.5, 1.5, 3.5, 1.5, 4.5, 1.5, 5.5, 1.5, 6.5, 1.5, 7.5, 1.5, 8.5, 1.5, 9.5, 1.5, 10.5, 1.5, 11.5, 1.5, 12.5, 2.5, 1.5, 2.5, 6.5, 2.5, 9.5, 2.5, 13.5, 3.5, 1.5, 3.5, 2.5, 3.5, 3.5, 3.5, 4.5, 3.5, 6.5, 3.5, 8.5, 3.5, 9.5, 3.5, 10.5, 3.5, 11.5, 3.5, 13.5, 4.5, 1.5, 4.5, 4.5, 4.5, 5.5, 4.5, 6.5, 4.5, 7.5, 4.5, 8.5, 4.5, 11.5, 4.5, 12.5, 4.5, 13.5, 5.5, 1.5, 5.5, 2.5, 5.5, 5.5, 5.5, 10.5, 5.5, 11.5, 5.5, 13.5, 6.5, 2.5, 6.5, 3.5, 6.5, 4.5, 6.5, 5.5, 6.5, 7.5, 6.5, 10.5, 6.5, 13.5, 7.5, 5.5, 7.5, 6.5, 7.5, 7.5, 7.5, 9.5, 7.5, 10.5, 7.5, 11.5, 7.5, 12.5, 7.5, 13.5, 8.5, 2.5, 8.5, 3.5, 8.5, 4.5, 8.5, 5.5, 8.5, 7.5, 8.5, 10.5, 8.5, 13.5, 9.5, 1.5, 9.5, 2.5, 9.5, 5.5, 9.5, 10.5, 9.5, 11.5, 9.5, 13.5, 10.5, 1.5, 10.5, 4.5, 10.5, 5.5, 10.5, 6.5, 10.5, 7.5, 10.5, 8.5, 10.5, 11.5, 10.5, 12.5, 10.5, 13.5, 11.5, 1.5, 11.5, 2.5, 11.5, 3.5, 11.5, 4.5, 11.5, 5.5, 11.5, 6.5, 11.5, 8.5, 11.5, 9.5, 11.5, 10.5, 11.5, 11.5, 11.5, 13.5, 12.5, 1.5, 12.5, 6.5, 12.5, 9.5, 12.5, 13.5, 13.5, 2.5, 13.5, 3.5, 13.5, 4.5, 13.5, 5.5, 13.5, 6.5, 13.5, 7.5, 13.5, 8.5, 13.5, 9.5, 13.5, 10.5, 13.5, 11.5, 13.5, 12.5};
-static deque<float> powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5};
+static deque<float> powerup = {1.5, 13.5, 13.5, 1.5, 13.5, 13.5}; //COORDINATES FOR POWERUP FOOD
 static vector<vector<bool>> bitmap; // 2d image of which squares are blocked and which are clear for pacman to move in
 bool* keyStates = new bool[256]; // record of all keys pressed
 int points = 0; // total points collected
@@ -128,8 +134,10 @@ void drawFood(float pacmanX, float pacmanY){
     }
     food.swap(temp);
 
+
     int powerupCount = powerup.size();
     
+    //CHECK IF THE POWERUP FOOD HAS NOT BEEN EATEN
     for (int i = 0; i < powerup.size(); i = i + 2){
                 if (!foodEaten(powerup.at(i)*squareSize, powerup.at(i + 1)*squareSize, pacmanX, pacmanY)){
                         Ptemp.push_back(powerup.at(i));
@@ -141,8 +149,9 @@ void drawFood(float pacmanX, float pacmanY){
         }
         powerup.swap(Ptemp);
 
+    //WHEN POWERUP FOOD IS EATEN
     if(powerupCount > powerup.size())
-        powermode = 1000;
+        powermode = 1000; //POWERMODE POSITIVE: POWERUP ACTIVATED
     
     glPointSize(5.0);
     glBegin(GL_POINTS);
@@ -153,9 +162,10 @@ void drawFood(float pacmanX, float pacmanY){
     }
     glEnd();
 
-    glPointSize(15.0);
+    //DISPLAYING POWERUP FOOD: BIG RED DOTS
+    glPointSize(15.0);//RED POWERUP FOOD IS BIGGER THAN REGUALR FOOD
     glBegin(GL_POINTS);
-    glColor3f(1, 0, 0);
+    glColor3f(1, 0, 0);//RED COLOR (R,G,B)
     for(int i = 0; i < powerup.size(); i = i + 2){
         glVertex2f(powerup.at(i)*squareSize, powerup.at(i + 1)*squareSize);
     }
@@ -211,35 +221,34 @@ void drawMonster(float positionX, float positionY, float r, float g, float b){
     glEnd();
 }
 
-//Method to update the position of the monsters randomly
-//MOVING THE GHOST WITH KEY PRESSES**************************
+//USER CONTROLLED GHOSTS WITH KEYS 'tfgh', 'ijkl', AND '1234'
 void updateMonster(float* monster, int id){
     //find the current position of the monster
     int x1Quadrant = (int)((monster[0] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
     int x2Quadrant = (int)((monster[0] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
     int y1Quadrant = (int)((monster[1] - (2/squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
     int y2Quadrant = (int)((monster[1] + (2/squareSize)) + (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-    //move him acording to its direction until he hits an obstacle
+    //CONTROLS FOR EACH GHOST
     if (monster[2] == 1)
     {
         if (keyStates['j']){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
-                    monster[0] -= 2 / squareSize;
+                    monster[0] -= 2 / squareSize; //LEFT
             }
         }
         if (keyStates['l']){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                    monster[0] += 2 / squareSize;
+                    monster[0] += 2 / squareSize; //RIGHT
                 }
         }
         if (keyStates['i']){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-                    monster[1] -= 2 / squareSize;
+                    monster[1] -= 2 / squareSize; //UP
                 }
         }
         if (keyStates['k']){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                    monster[1] += 2 / squareSize;
+                    monster[1] += 2 / squareSize; //DOWN
                 }
         }
     }
@@ -247,22 +256,22 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates['f']){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
-                    monster[0] -= 2 / squareSize;
+                    monster[0] -= 2 / squareSize; //LEFT
             }
         }
         if (keyStates['h']){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                    monster[0] += 2 / squareSize;
+                    monster[0] += 2 / squareSize; //RIGHT
                 }
         }
         if (keyStates['t']){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-                    monster[1] -= 2 / squareSize;
+                    monster[1] -= 2 / squareSize; //UP
                 }
         }
         if (keyStates['g']){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                    monster[1] += 2 / squareSize;
+                    monster[1] += 2 / squareSize; //DOWN
                 }
         }
     }
@@ -270,26 +279,27 @@ void updateMonster(float* monster, int id){
     {
         if (keyStates[49]){
             if (!bitmap.at(x1Quadrant).at((int)monster[1])){
-                    monster[0] -= 2 / squareSize;
+                    monster[0] -= 2 / squareSize; //LEFT
             }
         }
         if (keyStates[50]){
             if (!bitmap.at(x2Quadrant).at((int)monster[1])){
-                    monster[0] += 2 / squareSize;
+                    monster[0] += 2 / squareSize; //RIGHT
                 }
         }
         if (keyStates[51]){
             if (!bitmap.at((int)monster[0]).at(y1Quadrant)){
-                    monster[1] -= 2 / squareSize;
+                    monster[1] -= 2 / squareSize; //UP
                 }
         }
         if (keyStates[52]){
             if (!bitmap.at((int)monster[0]).at(y2Quadrant)){
-                    monster[1] += 2 / squareSize;
+                    monster[1] += 2 / squareSize; //DOWN
                 }
         }
     }
-        //COMMENTING OUT RANDOM GHOST MOVEMENT******************
+        //****COMMENTING OUT RANDOM GHOST MOVEMENT****
+        //Method to update the position of the monsters randomly
         /*
         switch ((int)monster[2]){
         case 1:
@@ -357,12 +367,12 @@ void resetGame(){
     xIncrement = 0;
     yIncrement = 0;
     rotation = 0;
-    null1 = false;
-    null2 = false;
-    null3 = false;
-    monster1 = new float[3] {10.5, 8.5, 1.0};
+    null1 = false; //SETS GHOST 1 TO DISPLAY
+    null2 = false; //SETS GHOST 2 TO DISPLAY
+    null3 = false; //SETS GHOST 3 TO DISPLAY
 
-    //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+    //USING 3 USER CONTROLLED GHOSTS (COMMENTED OUT THE 4TH)
+    monster1 = new float[3] {10.5, 8.5, 1.0};
     monster2 = new float[3] {13.5, 1.5, 2.0};
     monster3 = new float[3] {4.5, 6.5, 3.0};
     // monster4 = new float[3] {2.5, 13.5, 4.0};
@@ -428,53 +438,54 @@ void keyOperations(){
 void gameOver(){
     int pacmanX = (int)(1.5 + xIncrement);
     int pacmanY = (int)(1.5 + yIncrement);
+    //POSITION OF USER CONTORLLED GHOSTS (COMMENTED OUT THE 4TH)
     int monster1X = (int)(monster1[0]);
     int monster1Y = (int)(monster1[1]);
     int monster2X = (int)(monster2[0]);
     int monster2Y = (int)(monster2[1]);
     int monster3X = (int)(monster3[0]);
     int monster3Y = (int)(monster3[1]);
-    
-    //***********************************************************************
+    //int monster4X = (int)(monster4[0]);
+    //int monster4Y = (int)(monster4[1]);
+
+    //CHECKING IF PACMAN TOUCHES A GHOST
     if(!powermode){
         if(!null1){
             if (pacmanX == monster1X && pacmanY == monster1Y){
-                over = true;
+                over = true; //GAME OVER
             }
         }
         if(!null2){
             if (pacmanX == monster2X && pacmanY == monster2Y){
-                over = true;
+                over = true; //GAME OVER
             }
         }
         if(!null3){
             if (pacmanX == monster3X && pacmanY == monster3Y){
-                over = true;
+                over = true; //GAME OVER
             }
         }
     
     }
-    //i am putting powermode in the gameOver function for now
-    //might be better to put it in a separate function
+
+    //ALLOWING PACMAN TO EAT GHOSTS WHEN POWERMODE IS ACTIVATED (POWERUP ACTIVATED)
     else{
         if (pacmanX == monster1X && pacmanY == monster1Y){
-            null1 = true;
+            null1 = true; // ERASE GHOST 1
         }
         if (pacmanX == monster2X && pacmanY == monster2Y){
-            null2 = true;
+            null2 = true; // ERASE GHOST 2
         }
         if (pacmanX == monster3X && pacmanY == monster3Y){
-            null3 = true;
+            null3 = true; // ERASE GHOST 3
                 }
     
     }
 
+    //IF PACMAN EATS ALL THE FOOD: WIN
     if (points == 106){
-        over = true;
+        over = true; //WIN
     }
-    //*********************************************************************************
-
-
 }
 
 //Method to display the results of the game at the ends
@@ -533,19 +544,19 @@ void resultsDisplay(){
     }
 }
 
-//DISPLAYING WELCOME SCREEN WITH TEAM MEMBER NAMES AND INSTRUCTIONS
+//WELCOME SCREEN WTIH TEAM MEMBER NAMES AND USER CONTROL INSTRUCTIONS
 void welcomeScreen(){
     glClearColor(0, 0.2, 0.4, 1.0);
-    char* message = "*************************************";
-    glRasterPos2f(150, 200);
+    char* message = "*************************************"; //TEXT TO DISPLAY ON SCREEN
+    glRasterPos2f(150, 200); //POSITIONING TEXT ON THE SCREEN
     while (*message)
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-    message = "PACMAN 2.0 ";
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++); //PRINTING MESSAGE ABOVE IN SPECIFIED FONT
+    message = "PACMAN 2.0 "; //GAME NAME
     glColor3f(1, 1, 1);
     glRasterPos2f(300, 250);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-    message = "- by Aaron Pan, Vaibhavi Hansrajani, Kwadwo Osafo, Melissa Gibble, Noah Taniguchi";
+    message = "- by Aaron Pan, Vaibhavi Hansrajani, Kwadwo Osafo, Melissa Gibble, Noah Taniguchi"; //TEAM MEMBER NAMES
     glColor3f(1, 1, 1);
     glRasterPos2f(20, 300);
     while (*message)
@@ -554,23 +565,23 @@ void welcomeScreen(){
     glRasterPos2f(150, 350);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *message++);
-    message = "To control Pacman use A (left), D (right), W (up), and S (down).";
+    message = "To control Pacman use A (left), D (right), W (up), and S (down)."; //PACMAN CONTOL INSTRUCTIONS
     glRasterPos2f(110, 400);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-    message = "To control Ghost 1 use F (left), H (right), T (up), and G (down).";
+    message = "To control Ghost 1 use F (left), H (right), T (up), and G (down)."; //GHOST 1 CONTROL INSTRUCTIONS
     glRasterPos2f(112, 450);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-    message = "To control Ghost 2 use J (left), L (right), I (up), and K (down).";
+    message = "To control Ghost 2 use J (left), L (right), I (up), and K (down)."; //GHOST 2 CONTROL INSTRUCTIONS
     glRasterPos2f(116, 500);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-    message = "To control Ghost 3 use 1 (left), 2 (right), 3 (up), and 4 (down).";
+    message = "To control Ghost 3 use 1 (left), 2 (right), 3 (up), and 4 (down)."; //GHOST 3 CONTROL INSTRUCTIONS
     glRasterPos2f(116, 550);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
-    message = "To start or restart the game, press the space key.";
+    message = "To start or restart the game, press the space key."; //RESTART GAME CONTROL FUNCTIONS
     glRasterPos2f(170, 600);
     while (*message)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
@@ -590,16 +601,16 @@ void display(){
             drawFood((1.5 + xIncrement) * squareSize, (1.5 + yIncrement) * squareSize);
             drawPacman(1.5 + xIncrement, 1.5 + yIncrement, rotation);
 
-            //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+            //UPDATING THE 3 USER CONTROLLED GHOSTS (COMMENTED OUT THE 4TH)
             updateMonster(monster1, 1);
             updateMonster(monster2, 2);
             updateMonster(monster3, 3);
             // updateMonster(monster4, 4);
 
-            //USING 3 USER CONTROLLED GHOST (COMMENTED OUT THE REST)
+            //GHOSTS TURN WHITE WHEN PACMAN POWERMODE ACTIVATED (POWERUP ACTIVATED)
             if(powermode){
                 if(!null1)
-                    drawMonster(monster1[0], monster1[1], 1.0, 1.0, 1.0); //all are white in power mode
+                    drawMonster(monster1[0], monster1[1], 1.0, 1.0, 1.0); //ALL GHOSTS ARE WHITE WHEN POWERMODE ACTIVATED
                 if(!null2)
                     drawMonster(monster2[0], monster2[1], 1.0, 1.0, 1.0);
                 if(!null3)
@@ -610,6 +621,7 @@ void display(){
                 */
                 powermode = powermode - 1;
             }
+            //GHOSTS STAY THEIR DEFAULT COLOR WHEN POWERMODE NOT ACTIVATED (POWERUP NOT ACTIVATED)
             else{
                 if(!null1)
                     drawMonster(monster1[0], monster1[1], 0.0, 1.0, 1.0); //cyan
@@ -633,7 +645,7 @@ void display(){
     glutSwapBuffers();
 }
 
-//Methdo to reshape the game is the screen size changes
+//Method to reshape the game is the screen size changes
 void reshape(int w, int h){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -658,8 +670,7 @@ int main(int argc, char** argv){
     glutReshapeFunc(reshape);
     glutIdleFunc(display);
     glutKeyboardFunc(keyPressed);
-    //NOTE: THIS FUNCTION MIGHT WORK BETTER ON MAC - IT WAS THE ONLY COMMAND NOT RECOGNIZED WHEN COMPILED WITH GLUT ON WINDOWS***********
-    glutKeyboardUpFunc(keyUp);
+    glutKeyboardUpFunc(keyUp); //THIS FUNCTION DOES NOT COMPILE FOR SOME GLUT HEADER FILES ON WINDOWS
 
     //run the game
     init();
